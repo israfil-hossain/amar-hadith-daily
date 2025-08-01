@@ -2,39 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Islamic-inspired design system for Amar Hadith */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Base colors inspired by Islamic art */
+    --background: 40 20% 98%;
+    --foreground: 30 15% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Card with warm, paper-like feel */
+    --card: 45 25% 96%;
+    --card-foreground: 30 15% 15%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 45 25% 96%;
+    --popover-foreground: 30 15% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Islamic green theme */
+    --primary: 150 40% 25%;
+    --primary-foreground: 45 25% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm secondary tones */
+    --secondary: 40 30% 90%;
+    --secondary-foreground: 30 15% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted warm tones */
+    --muted: 40 20% 92%;
+    --muted-foreground: 30 8% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Gold accent inspired by Islamic calligraphy */
+    --accent: 45 60% 70%;
+    --accent-foreground: 30 15% 15%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 45 25% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 40 15% 85%;
+    --input: 40 15% 90%;
+    --ring: 150 40% 25%;
+
+    /* Islamic design custom colors */
+    --islamic-green: 150 40% 25%;
+    --islamic-gold: 45 60% 70%;
+    --warm-cream: 45 25% 96%;
+    --sage-green: 120 20% 85%;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(150 40% 25%), hsl(120 35% 30%));
+    --gradient-warm: linear-gradient(180deg, hsl(45 25% 96%), hsl(40 20% 92%));
+    --gradient-gold: linear-gradient(135deg, hsl(45 60% 70%), hsl(40 50% 60%));
+    
+    /* Shadows with warm tones */
+    --shadow-warm: 0 4px 20px hsl(30 15% 15% / 0.1);
+    --shadow-card: 0 2px 15px hsl(150 40% 25% / 0.08);
+    
+    /* Animation */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     --radius: 0.5rem;
 

@@ -1,0 +1,33 @@
+{
+  "name": "আমার হাদিস - দৈনিক হাদিস অধ্যয়ন",
+  "short_name": "আমার হাদিস",
+  "description": "প্রতিদিন ৩টি হাদিস পান আপনার ইমেইলে। পড়ার পর এখানে এসে চিহ্নিত করুন।",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10B981",
+  "orientation": "portrait",
+  "lang": "bn",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["education", "lifestyle", "religion"],
+  "screenshots": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "1280x720",
+      "type": "image/svg+xml",
+      "form_factor": "wide"
+    }
+  ]
+}

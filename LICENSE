@@ -1,0 +1,109 @@
+MIT License
+
+Copyright (c) 2024 Israfil Hossain and Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+## Additional Terms for Islamic Content
+
+### Hadith Content License
+The hadith content, translations, and explanations included in this software are 
+derived from authentic Islamic sources and are provided for educational and 
+religious purposes. 
+
+### Attribution Requirements
+When using or redistributing hadith content from this software:
+
+1. **Source Attribution:** Always maintain proper attribution to the original 
+   hadith collections (Sahih Bukhari, Sahih Muslim, etc.)
+
+2. **Narrator Chain:** Preserve the chain of narrators (isnad) when provided
+
+3. **Scholarly References:** Maintain references to hadith numbers and 
+   authenticity grades
+
+4. **Translation Credits:** Credit translators and scholars whose work is included
+
+### Content Accuracy Disclaimer
+While every effort has been made to ensure the accuracy of hadith content and 
+translations, users are encouraged to:
+
+- Verify content with authentic Islamic sources
+- Consult qualified Islamic scholars for religious guidance
+- Report any inaccuracies through the project's issue tracker
+
+### Religious Use
+This software and its content are provided to facilitate Islamic learning and 
+practice. The developers and contributors:
+
+- Do not claim religious authority
+- Encourage consultation with qualified Islamic scholars
+- Disclaim responsibility for religious interpretations or decisions based on this content
+
+### Community Guidelines
+Users and contributors are expected to:
+
+- Respect Islamic values and principles
+- Maintain accuracy in religious content
+- Foster a respectful and inclusive community
+- Report inappropriate use or content
+
+---
+
+## Third-Party Licenses
+
+This project includes content and libraries under various licenses:
+
+### Hadith Sources
+- **Sahih Bukhari:** Public domain Islamic text
+- **Sahih Muslim:** Public domain Islamic text
+- **Sunan Abu Dawood:** Public domain Islamic text
+- **Jami at-Tirmidhi:** Public domain Islamic text
+- **Sunan an-Nasai:** Public domain Islamic text
+- **Sunan Ibn Majah:** Public domain Islamic text
+
+### Prayer Times Data
+- **Aladhan API:** Used under their terms of service
+- **Islamic Calendar:** Based on astronomical calculations
+
+### Open Source Libraries
+All third-party libraries are used under their respective licenses:
+- Next.js (MIT License)
+- React (MIT License)
+- Tailwind CSS (MIT License)
+- Supabase (Apache 2.0 License)
+- And others as specified in package.json
+
+---
+
+## Contact
+
+For questions about licensing or content usage:
+- Email: legal@amarhadith.com
+- GitHub: https://github.com/israfil-hossain/amar-hadith-daily
+
+---
+
+بسم الله الرحمن الرحيم
+
+"And whoever does good deeds, whether male or female, while being a believer, 
+those will enter Paradise and will not be wronged even as much as the speck 
+on a date seed." - Quran 4:124

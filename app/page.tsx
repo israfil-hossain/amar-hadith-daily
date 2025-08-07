@@ -202,7 +202,25 @@ export default function HomePage() {
 
 
   if (!user) {
-    return <LandingPage onGetStarted={handleGetStarted} />
+    try {
+      return <LandingPage onGetStarted={handleGetStarted} />
+    } catch (error) {
+      console.error('LandingPage error:', error)
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">কিছু সমস্যা হয়েছে</h1>
+            <p className="text-muted-foreground mb-4">অ্যাপ্লিকেশনে একটি অপ্রত্যাশিত ত্রুটি ঘটেছে।</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-islamic-green text-white px-4 py-2 rounded"
+            >
+              পৃষ্ঠাটি রিফ্রেশ করুন
+            </button>
+          </div>
+        </div>
+      )
+    }
   }
 
   return (

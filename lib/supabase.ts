@@ -55,7 +55,7 @@ export const getProfile = async (userId: string) => {
   return { data, error }
 }
 
-export const updateProfile = async (userId: string, updates: any) => {
+export const updateProfile = async (userId: string, updates: Record<string, unknown>) => {
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)

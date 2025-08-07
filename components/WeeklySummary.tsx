@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -37,69 +37,35 @@ interface WeeklyStats {
   improvements: string[]
 }
 
+// Helper functions outside component
+function getWeekStart(date: Date): Date {
+  const d = new Date(date)
+  const day = d.getDay()
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1) // Adjust when day is Sunday
+  return new Date(d.setDate(diff))
+}
+
+function getWeekEnd(weekStart: Date): Date {
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekStart.getDate() + 6)
+  return weekEnd
+}
+
 export function WeeklySummary({ compact = false }: WeeklySummaryProps) {
   const { user } = useAuth()
   const { toast } = useToast()
-  
+
   const [weeklyStats, setWeeklyStats] = useState<WeeklyStats | null>(null)
   const [loading, setLoading] = useState(true)
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(getWeekStart(new Date()))
   const [progressData, setProgressData] = useState<UserProgress[]>([])
 
-  useEffect(() => {
-    if (user) {
-      loadWeeklySummary()
-    } else {
-      setLoading(false)
-    }
-  }, [user?.id, currentWeekStart]) // Fixed: use user.id instead of full user object
-
-  function getWeekStart(date: Date): Date {
-    const d = new Date(date)
-    const day = d.getDay()
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1) // Adjust when day is Sunday
-    return new Date(d.setDate(diff))
-  }
-
-  function getWeekEnd(weekStart: Date): Date {
-    const weekEnd = new Date(weekStart)
-    weekEnd.setDate(weekStart.getDate() + 6)
-    return weekEnd
-  }
-
-  const loadWeeklySummary = async () => {
-    if (!user) return
-
-    try {
-      setLoading(true)
-
-      const weekEnd = getWeekEnd(currentWeekStart)
-      const startDate = currentWeekStart.toISOString().split('T')[0]
-      const endDate = weekEnd.toISOString().split('T')[0]
-
-      const { data, error } = await getUserProgress(user.id, startDate, endDate)
-      
-      if (error) {
-        console.error('Error loading weekly summary:', error)
-        return
-      }
-
-      setProgressData(data || [])
-      calculateWeeklyStats(data || [])
-      
-    } catch (error) {
-      console.error('Error loading weekly summary:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const calculateWeeklyStats = (data: UserProgress[]) => {
+  const calculateWeeklyStats = useCallback((data: UserProgress[]) => {
     const totalHadithRead = data.reduce((sum, day) => sum + day.hadith_read_count, 0)
     const totalTimeSpent = data.reduce((sum, day) => sum + day.time_spent_minutes, 0)
     const completedDays = data.filter(day => day.hadith_read_count > 0).length
     const streakDays = data.filter(day => day.streak_maintained).length
-    
+
     const averageDaily = completedDays > 0 ? totalHadithRead / completedDays : 0
     const weekGoal = 21 // 3 hadith per day * 7 days
     const weekProgress = Math.min((totalHadithRead / weekGoal) * 100, 100)
@@ -138,7 +104,42 @@ export function WeeklySummary({ compact = false }: WeeklySummaryProps) {
       bestDay: bestDay?.count > 0 ? bestDay : null,
       improvements
     })
-  }
+  }, [])
+
+  const loadWeeklySummary = useCallback(async () => {
+    if (!user) return
+
+    try {
+      setLoading(true)
+
+      const weekEnd = getWeekEnd(currentWeekStart)
+      const startDate = currentWeekStart.toISOString().split('T')[0]
+      const endDate = weekEnd.toISOString().split('T')[0]
+
+      const { data, error } = await getUserProgress(user.id, startDate, endDate)
+
+      if (error) {
+        console.error('Error loading weekly summary:', error)
+        return
+      }
+
+      setProgressData(data || [])
+      calculateWeeklyStats(data || [])
+
+    } catch (error) {
+      console.error('Error loading weekly summary:', error)
+    } finally {
+      setLoading(false)
+    }
+  }, [user, currentWeekStart, calculateWeeklyStats])
+
+  useEffect(() => {
+    if (user) {
+      loadWeeklySummary()
+    } else {
+      setLoading(false)
+    }
+  }, [user, currentWeekStart, loadWeeklySummary])
 
   const navigateWeek = (direction: 'prev' | 'next') => {
     const newWeekStart = new Date(currentWeekStart)

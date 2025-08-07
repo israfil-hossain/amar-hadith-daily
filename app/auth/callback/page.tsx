@@ -21,8 +21,8 @@ export default function AuthCallback() {
         console.log('Auth callback started...')
 
         // Check for error parameters first
-        const error_code = searchParams.get('error')
-        const error_description = searchParams.get('error_description')
+        const error_code = searchParams?.get('error')
+        const error_description = searchParams?.get('error_description')
 
         if (error_code) {
           console.error('OAuth error:', error_code, error_description)
@@ -54,7 +54,7 @@ export default function AuthCallback() {
           console.log('No session found, checking for auth code...')
 
           // Try to handle auth code exchange
-          const code = searchParams.get('code')
+          const code = searchParams?.get('code')
           if (code) {
             console.log('Auth code found, exchanging for session...')
             const { data: sessionData, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)

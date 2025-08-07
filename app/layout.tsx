@@ -39,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="bn" dir="ltr">
-      <body className={inter.className}>
+    <html lang="bn" dir="ltr" suppressHydrationWarning>
+      <body className={inter.className} suppressHydrationWarning>
         <ReactQueryProvider>
           <AuthProvider>
             <TooltipProvider>

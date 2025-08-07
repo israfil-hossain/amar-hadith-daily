@@ -19,7 +19,7 @@ export default function BookPage() {
   const { user } = useAuth()
   const { toast } = useToast()
   
-  const bookId = params.id as string
+  const bookId = params?.id as string
   const [book, setBook] = useState<HadithBook | null>(null)
   const [hadithList, setHadithList] = useState<Hadith[]>([])
   const [hadithInteractions, setHadithInteractions] = useState<any[]>([])

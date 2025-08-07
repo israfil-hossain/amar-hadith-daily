@@ -350,9 +350,9 @@ export default function CollectionsPage() {
                       </div>
                       <div className="flex items-center gap-1">
                         {collection.is_public ? (
-                          <Eye className="w-4 h-4 text-green-500" title="সবার জন্য দৃশ্যমান" />
+                          <Eye className="w-4 h-4 text-green-500" />
                         ) : (
-                          <EyeOff className="w-4 h-4 text-gray-500" title="ব্যক্তিগত" />
+                          <EyeOff className="w-4 h-4 text-gray-500" />
                         )}
                       </div>
                     </div>

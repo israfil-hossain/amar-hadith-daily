@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -24,16 +24,12 @@ export const Leaderboard = ({ timeframe = 'all-time', limit = 10, compact = fals
   const [loading, setLoading] = useState(true)
   const [selectedTimeframe, setSelectedTimeframe] = useState(timeframe)
 
-  useEffect(() => {
-    loadLeaderboard()
-  }, [selectedTimeframe, limit])
-
-  const loadLeaderboard = async () => {
+  const loadLeaderboard = useCallback(async () => {
     try {
       setLoading(true)
 
       // Check if profiles table exists and has points column
-      let query = supabase
+      const query = supabase
         .from('profiles')
         .select('id, full_name, points, streak_count, total_hadith_read, level, avatar_url')
         .order('points', { ascending: false })
@@ -85,7 +81,7 @@ export const Leaderboard = ({ timeframe = 'all-time', limit = 10, compact = fals
               level: 2,
               rank: 3
             }
-          ])
+          ] as LeaderboardUser[])
         }
         return
       }
@@ -103,7 +99,11 @@ export const Leaderboard = ({ timeframe = 'all-time', limit = 10, compact = fals
     } finally {
       setLoading(false)
     }
-  }
+  }, [selectedTimeframe, limit])
+
+  useEffect(() => {
+    loadLeaderboard()
+  }, [loadLeaderboard])
 
   const getRankIcon = (rank: number) => {
     switch (rank) {
@@ -188,7 +188,7 @@ export const Leaderboard = ({ timeframe = 'all-time', limit = 10, compact = fals
                   key={option.value}
                   variant={selectedTimeframe === option.value ? "default" : "ghost"}
                   size="sm"
-                  onClick={() => setSelectedTimeframe(option.value as any)}
+                  onClick={() => setSelectedTimeframe(option.value as 'all' | 'week' | 'month')}
                   className={selectedTimeframe === option.value ? "bg-islamic-green hover:bg-islamic-green/90" : ""}
                 >
                   <option.icon className="w-3 h-3 mr-1" />

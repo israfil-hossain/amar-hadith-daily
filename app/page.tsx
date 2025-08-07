@@ -18,15 +18,21 @@ import { Loader2 } from "lucide-react";
 export default function HomePage() {
   const { toast } = useToast();
   const { user, profile, loading: authLoading, signOut } = useAuth();
+  console.log("profile: ", profile); 
+  console.log("user: ", user); 
   const router = useRouter();
   const [dailyHadith, setDailyHadith] = useState<Hadith[]>([]);
   const [hadithInteractions, setHadithInteractions] = useState<{ hadith_id: string; is_read: boolean; is_favorited: boolean }[]>([]);
-  const [loading, setLoading] = useState(false); // Start with false to show content immediately
+  const [loading, setLoading] = useState(false);
   const [hasLoaded, setHasLoaded] = useState(false);
 
   // Use ref to store toast function to avoid dependency issues
   const toastRef = useRef(toast);
   toastRef.current = toast;
+
+  const handleGetStarted = () => {
+    router.push('/auth/signup')
+  }
 
   // Load fallback data immediately
   useEffect(() => {
@@ -194,17 +200,9 @@ export default function HomePage() {
     );
   }
 
-  // Debug logging
-  console.log('🏠 Page - User:', user)
-  console.log('🏠 Page - Profile:', profile)
-  console.log('🏠 Page - Auth Loading:', authLoading)
-  console.log('🏠 Page - Loading:', loading)
-  console.log('🏠 Page - Daily Hadith:', dailyHadith.length, 'items')
-  console.log('🏠 Page - Daily Hadith Data:', dailyHadith)
-  console.log('🏠 Page - Hadith Interactions:', hadithInteractions.length, 'items')
 
   if (!user) {
-    return <LandingPage />
+    return <LandingPage onGetStarted={handleGetStarted} />
   }
 
   return (

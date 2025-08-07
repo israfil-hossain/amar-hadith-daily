@@ -20,7 +20,7 @@ export default function SearchPage() {
   const { user } = useAuth()
   const { toast } = useToast()
   
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '')
+  const [searchQuery, setSearchQuery] = useState(searchParams?.get('q') || '')
   const [hadithList, setHadithList] = useState<Hadith[]>([])
   const [hadithInteractions, setHadithInteractions] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -29,7 +29,7 @@ export default function SearchPage() {
   const [languageFilter, setLanguageFilter] = useState<string>('all')
 
   useEffect(() => {
-    const query = searchParams.get('q')
+    const query = searchParams?.get('q')
     if (query) {
       setSearchQuery(query)
       handleSearch(query)

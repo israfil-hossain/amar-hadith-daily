@@ -100,6 +100,7 @@ export default function AchievementsPage() {
   const getAchievementProgress = (achievement: Achievement) => {
     if (!profile) return { progress: 0, maxProgress: 100 }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const criteria = achievement.criteria as any
     
     if (criteria.hadith_read) {

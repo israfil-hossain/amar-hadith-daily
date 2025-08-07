@@ -38,9 +38,9 @@ export const HadithCard = ({
             </div>
             <div>
               <Badge variant="secondary" className="text-xs font-medium">
-                {hadith.book?.name_bangla || hadith.source} • {hadith.hadith_number || hadith.hadithNumber}
+                {hadith.book?.name_bangla || hadith.reference} • {hadith.hadith_number}
               </Badge>
-              <p className="text-xs text-muted-foreground mt-1">{hadith.chapter_bangla || hadith.chapter}</p>
+              <p className="text-xs text-muted-foreground mt-1">{hadith.chapter_bangla}</p>
             </div>
           </div>
           
@@ -57,7 +57,7 @@ export const HadithCard = ({
         {/* Arabic Text */}
         <div className="text-center py-6 px-4 bg-warm-cream rounded-lg border border-border/20">
           <p className="text-lg leading-relaxed font-arabic text-primary" style={{ fontFamily: 'serif', direction: 'rtl' }}>
-            {hadith.text_arabic || hadith.arabic}
+            {hadith.text_arabic}
           </p>
         </div>
 
@@ -68,7 +68,7 @@ export const HadithCard = ({
             <span className="text-sm font-medium text-islamic-green">বাংলা অনুবাদ</span>
           </div>
           <p className="text-lg leading-relaxed text-foreground font-medium">
-            {hadith.text_bangla || hadith.bangla}
+            {hadith.text_bangla}
           </p>
         </div>
 

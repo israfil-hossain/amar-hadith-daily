@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -60,11 +60,7 @@ export const CommentsSection = ({ hadithId, compact = false }: CommentsSectionPr
   const [replyingTo, setReplyingTo] = useState<string | null>(null)
   const [replyContent, setReplyContent] = useState('')
 
-  useEffect(() => {
-    loadComments()
-  }, [hadithId])
-
-  const loadComments = async () => {
+  const loadComments = useCallback(async () => {
     try {
       setLoading(true)
 
@@ -92,7 +88,7 @@ export const CommentsSection = ({ hadithId, compact = false }: CommentsSectionPr
       if (user && commentsData) {
         const commentIds = commentsData.flatMap(c => [
           c.id,
-          ...(c.replies || []).map((r: any) => r.id)
+          ...(c.replies || []).map((r: { id: string }) => r.id)
         ])
 
         const { data: likesData } = await supabase
@@ -106,7 +102,7 @@ export const CommentsSection = ({ hadithId, compact = false }: CommentsSectionPr
         const commentsWithLikes = commentsData.map(comment => ({
           ...comment,
           isLiked: likedCommentIds.has(comment.id),
-          replies: comment.replies?.map((reply: any) => ({
+          replies: comment.replies?.map((reply: { id: string; [key: string]: unknown }) => ({
             ...reply,
             isLiked: likedCommentIds.has(reply.id)
           }))
@@ -121,7 +117,11 @@ export const CommentsSection = ({ hadithId, compact = false }: CommentsSectionPr
     } finally {
       setLoading(false)
     }
-  }
+  }, [hadithId, user])
+
+  useEffect(() => {
+    loadComments()
+  }, [loadComments])
 
   const submitComment = async (content: string, parentId?: string) => {
     if (!user || !content.trim()) return

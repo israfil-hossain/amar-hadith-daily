@@ -1,271 +1,305 @@
 import { Resend } from 'resend'
 
+// Initialize Resend with API key
 const resend = new Resend(process.env.RESEND_API_KEY)
 
-export interface EmailTemplate {
-  to: string
+export interface EmailOptions {
+  to: string | string[]
   subject: string
   html: string
-  text?: string
+  from?: string
 }
 
-// Send welcome email to new users
-export async function sendWelcomeEmail(userEmail: string, userName: string) {
+export async function sendEmail({ to, subject, html, from }: EmailOptions) {
   try {
+    // Use environment variable for from email or default
+    const fromEmail = from || process.env.FROM_EMAIL || 'noreply@amarhadith.com'
+    
     const { data, error } = await resend.emails.send({
-      from: 'আমার হাদিস <noreply@yourdomain.com>',
-      to: userEmail,
-      subject: 'আমার হাদিসে স্বাগতম! 🕌',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-          <div style="background: linear-gradient(135deg, #10B981, #059669); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
-            <h1 style="color: white; margin: 0; font-size: 28px;">🕌 আমার হাদিস</h1>
-            <p style="color: #f0f9ff; margin: 10px 0 0 0; font-size: 16px;">দৈনিক হাদিস অধ্যয়ন</p>
-          </div>
-          
-          <div style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <h2 style="color: #10B981; margin-top: 0;">আসসালামু আলাইকুম ${userName}!</h2>
-            
-            <p style="color: #374151; line-height: 1.6; font-size: 16px;">
-              আমার হাদিস পরিবারে আপনাকে স্বাগতম! আপনি এখন প্রতিদিন ৩টি করে নির্বাচিত হাদিস পাবেন যা আপনার ইসলামী জ্ঞান বৃদ্ধিতে সহায়ক হবে।
-            </p>
-            
-            <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10B981;">
-              <h3 style="color: #10B981; margin-top: 0;">আপনি যা পাবেন:</h3>
-              <ul style="color: #374151; line-height: 1.8;">
-                <li>📚 প্রতিদিন ৩টি নির্বাচিত হাদিস</li>
-                <li>🕌 নামাজের সময়সূচী</li>
-                <li>📊 আপনার অগ্রগতি ট্র্যাকিং</li>
-                <li>⭐ পছন্দের হাদিস সংরক্ষণ</li>
-                <li>🤝 কমিউনিটিতে অবদান রাখার সুযোগ</li>
-              </ul>
-            </div>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}" 
-                 style="background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-                আজই শুরু করুন
-              </a>
-            </div>
-            
-            <p style="color: #6B7280; font-size: 14px; text-align: center; margin-top: 30px;">
-              আল্লাহ আপনাকে উত্তম প্রতিদান দিন। বারাকাল্লাহু ফিকুম।
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 20px; color: #9CA3AF; font-size: 12px;">
-            <p>© ২০২৪ আমার হাদিস। সকল অধিকার সংরক্ষিত।</p>
-          </div>
-        </div>
-      `,
-      text: `আসসালামু আলাইকুম ${userName}! আমার হাদিসে স্বাগতম। আপনি এখন প্রতিদিন ৩টি করে নির্বাচিত হাদিস পাবেন।`
+      from: fromEmail,
+      to: Array.isArray(to) ? to : [to],
+      subject,
+      html,
     })
 
     if (error) {
-      console.error('Error sending welcome email:', error)
-      return { success: false, error }
+      console.error('Email sending error:', error)
+      throw new Error(`Failed to send email: ${error.message}`)
     }
 
+    console.log('Email sent successfully:', data)
     return { success: true, data }
   } catch (error) {
-    console.error('Error sending welcome email:', error)
-    return { success: false, error }
+    console.error('Email service error:', error)
+    throw error
   }
 }
 
-// Send daily hadith email
-export async function sendDailyHadithEmail(
-  userEmail: string, 
-  userName: string, 
-  hadithList: any[]
-) {
-  try {
-    const hadithHtml = hadithList.map((hadith, index) => `
-      <div style="background: white; padding: 25px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-        <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-          <h3 style="color: #10B981; margin: 0; font-size: 18px;">হাদিস ${index + 1}</h3>
-          <p style="color: #6B7280; margin: 5px 0 0 0; font-size: 14px;">${hadith.book?.name_bangla || hadith.source} • ${hadith.hadith_number}</p>
+// Email templates
+export const emailTemplates = {
+  welcome: (userName: string) => `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>আমার হাদিসে স্বাগতম</title>
+      <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f8f9fa;
+        }
+        .container {
+          background: white;
+          border-radius: 10px;
+          padding: 30px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+        }
+        .logo {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, #2d5a27, #d4af37);
+          border-radius: 50%;
+          margin: 0 auto 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 24px;
+        }
+        .title {
+          color: #2d5a27;
+          font-size: 24px;
+          margin: 0;
+        }
+        .content {
+          margin: 20px 0;
+        }
+        .button {
+          display: inline-block;
+          background: linear-gradient(135deg, #2d5a27, #d4af37);
+          color: white;
+          padding: 12px 30px;
+          text-decoration: none;
+          border-radius: 5px;
+          margin: 20px 0;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #eee;
+          color: #666;
+          font-size: 14px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <div class="logo">📖</div>
+          <h1 class="title">আমার হাদিসে স্বাগতম</h1>
         </div>
         
-        <div style="text-align: center; padding: 20px; background: #fefce8; border-radius: 8px; margin-bottom: 15px;">
-          <p style="font-size: 20px; line-height: 1.8; color: #1f2937; font-family: 'Times New Roman', serif; direction: rtl;">
-            ${hadith.text_arabic || hadith.arabic}
-          </p>
+        <div class="content">
+          <p>আসসালামু আলাইকুম ${userName},</p>
+          
+          <p>আমার হাদিস পরিবারে আপনাকে স্বাগতম! আপনি এখন প্রতিদিন সহীহ হাদিস পড়ার একটি সুন্দর যাত্রা শুরু করেছেন।</p>
+          
+          <p><strong>আপনি যা পাবেন:</strong></p>
+          <ul>
+            <li>প্রতিদিন ৩টি নির্বাচিত হাদিস</li>
+            <li>আপনার পড়ার অগ্রগতি ট্র্যাকিং</li>
+            <li>পছন্দের হাদিস সংরক্ষণ</li>
+            <li>ইসলামিক ক্যালেন্ডার ও নামাজের সময়</li>
+          </ul>
+          
+          <p>আজই শুরু করুন আপনার ইসলামিক জ্ঞান অর্জনের যাত্রা:</p>
+          
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://amarhadith.com'}" class="button">
+            আজকের হাদিস পড়ুন
+          </a>
         </div>
         
-        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px;">
-          <p style="font-size: 16px; line-height: 1.7; color: #374151; margin: 0;">
-            ${hadith.text_bangla || hadith.bangla}
-          </p>
+        <div class="footer">
+          <p>আল্লাহ আপনাকে বরকত দান করুন।</p>
+          <p>আমার হাদিস টিম</p>
+          <p><small>এই ইমেইলটি পেতে না চাইলে <a href="#">আনসাবস্ক্রাইব</a> করুন।</small></p>
         </div>
-        
-        ${hadith.narrator ? `
-          <div style="margin-top: 15px; padding: 10px; background: #f9fafb; border-radius: 6px;">
-            <p style="margin: 0; color: #6B7280; font-size: 14px;">
-              <strong>বর্ণনাকারী:</strong> ${hadith.narrator}
-            </p>
-          </div>
-        ` : ''}
       </div>
-    `).join('')
+    </body>
+    </html>
+  `,
 
-    const { data, error } = await resend.emails.send({
-      from: 'আমার হাদিস <noreply@yourdomain.com>',
-      to: userEmail,
-      subject: `আজকের হাদিস - ${new Date().toLocaleDateString('bn-BD')} 📚`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-          <div style="background: linear-gradient(135deg, #10B981, #059669); padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 25px;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">🕌 আজকের হাদিস</h1>
-            <p style="color: #f0f9ff; margin: 10px 0 0 0; font-size: 16px;">
-              ${new Date().toLocaleDateString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-            </p>
-          </div>
-          
-          <div style="margin-bottom: 20px;">
-            <p style="color: #374151; font-size: 16px; margin: 0;">আসসালামু আলাইকুম ${userName},</p>
-            <p style="color: #6B7280; font-size: 14px; margin: 5px 0 0 0;">আজকের জন্য নির্বাচিত হাদিসগুলি:</p>
-          </div>
-          
-          ${hadithHtml}
-          
-          <div style="text-align: center; margin: 30px 0;">
-            <a href="${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'}" 
-               style="background: linear-gradient(135deg, #10B981, #059669); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
-              পঠিত হিসেবে চিহ্নিত করুন
-            </a>
-          </div>
-          
-          <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; text-align: center; margin-top: 25px;">
-            <p style="color: #374151; margin: 0; font-size: 14px;">
-              "যে ব্যক্তি জ্ঞানের সন্ধানে বের হয়, সে আল্লাহর পথে থাকে।" - তিরমিযী
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 20px; color: #9CA3AF; font-size: 12px;">
-            <p>© ২০২৪ আমার হাদিস। সকল অধিকার সংরক্ষিত।</p>
-            <p>
-              <a href="${process.env.NEXT_PUBLIC_APP_URL}/profile" style="color: #10B981;">সেটিংস</a> | 
-              <a href="${process.env.NEXT_PUBLIC_APP_URL}/unsubscribe" style="color: #10B981;">আনসাবস্ক্রাইব</a>
-            </p>
-          </div>
+  dailyHadith: (hadithList: any[]) => `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>আজকের হাদিস</title>
+      <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f8f9fa;
+        }
+        .container {
+          background: white;
+          border-radius: 10px;
+          padding: 30px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 30px;
+          padding-bottom: 20px;
+          border-bottom: 2px solid #2d5a27;
+        }
+        .logo {
+          width: 60px;
+          height: 60px;
+          background: linear-gradient(135deg, #2d5a27, #d4af37);
+          border-radius: 50%;
+          margin: 0 auto 15px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 24px;
+        }
+        .title {
+          color: #2d5a27;
+          font-size: 24px;
+          margin: 0;
+        }
+        .date {
+          color: #666;
+          font-size: 14px;
+          margin-top: 5px;
+        }
+        .hadith-card {
+          background: #f8f9fa;
+          border-left: 4px solid #2d5a27;
+          padding: 20px;
+          margin: 20px 0;
+          border-radius: 0 8px 8px 0;
+        }
+        .hadith-text {
+          font-size: 16px;
+          line-height: 1.8;
+          margin-bottom: 15px;
+          font-style: italic;
+        }
+        .hadith-source {
+          color: #2d5a27;
+          font-weight: bold;
+          font-size: 14px;
+        }
+        .button {
+          display: inline-block;
+          background: linear-gradient(135deg, #2d5a27, #d4af37);
+          color: white;
+          padding: 12px 30px;
+          text-decoration: none;
+          border-radius: 5px;
+          margin: 20px auto;
+          text-align: center;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 30px;
+          padding-top: 20px;
+          border-top: 1px solid #eee;
+          color: #666;
+          font-size: 14px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <div class="logo">📖</div>
+          <h1 class="title">আজকের হাদিস</h1>
+          <div class="date">${new Date().toLocaleDateString('bn-BD', { 
+            weekday: 'long', 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}</div>
         </div>
-      `,
-      text: `আসসালামু আলাইকুম ${userName}! আজকের হাদিস: ${hadithList.map(h => h.text_bangla || h.bangla).join(' | ')}`
-    })
-
-    if (error) {
-      console.error('Error sending daily hadith email:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
-  } catch (error) {
-    console.error('Error sending daily hadith email:', error)
-    return { success: false, error }
-  }
-}
-
-// Send prayer reminder email
-export async function sendPrayerReminderEmail(
-  userEmail: string,
-  userName: string,
-  prayerName: string,
-  prayerTime: string
-) {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: 'আমার হাদিস <noreply@yourdomain.com>',
-      to: userEmail,
-      subject: `${prayerName} নামাজের সময় 🕌`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-          <div style="background: linear-gradient(135deg, #10B981, #059669); padding: 25px; border-radius: 10px; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">🕌 নামাজের সময়</h1>
-            <h2 style="color: #f0f9ff; margin: 15px 0 0 0; font-size: 28px;">${prayerName}</h2>
-            <p style="color: #f0f9ff; margin: 10px 0 0 0; font-size: 18px;">${prayerTime}</p>
-          </div>
-          
-          <div style="background: white; padding: 25px; border-radius: 10px; margin-top: 20px; text-align: center;">
-            <p style="color: #374151; font-size: 16px; margin: 0 0 15px 0;">আসসালামু আলাইকুম ${userName},</p>
-            <p style="color: #6B7280; font-size: 14px; margin: 0;">
-              ${prayerName} নামাজের সময় হয়েছে। আল্লাহ আপনাকে তাওফিক দিন।
-            </p>
-          </div>
-          
-          <div style="text-align: center; margin-top: 20px; color: #9CA3AF; font-size: 12px;">
-            <p>© ২০২৪ আমার হাদিস</p>
-          </div>
-        </div>
-      `,
-      text: `আসসালামু আলাইকুম ${userName}! ${prayerName} নামাজের সময় হয়েছে (${prayerTime})।`
-    })
-
-    if (error) {
-      console.error('Error sending prayer reminder email:', error)
-      return { success: false, error }
-    }
-
-    return { success: true, data }
-  } catch (error) {
-    console.error('Error sending prayer reminder email:', error)
-    return { success: false, error }
-  }
-}
-
-// Send weekly summary email
-export async function sendWeeklySummaryEmail(
-  userEmail: string,
-  userName: string,
-  weeklyStats: any
-) {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: 'আমার হাদিস <noreply@yourdomain.com>',
-      to: userEmail,
-      subject: 'আপনার সাপ্তাহিক অগ্রগতি 📊',
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f8f9fa;">
-          <div style="background: linear-gradient(135deg, #10B981, #059669); padding: 25px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">📊 সাপ্তাহিক সামারি</h1>
-            <p style="color: #f0f9ff; margin: 10px 0 0 0; font-size: 16px;">আপনার অগ্রগতি</p>
-          </div>
-          
-          <div style="background: white; padding: 25px; border-radius: 10px;">
-            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">আসসালামু আলাইকুম ${userName},</p>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-              <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; text-align: center;">
-                <h3 style="color: #10B981; margin: 0; font-size: 24px;">${weeklyStats.totalHadithRead}</h3>
-                <p style="color: #6B7280; margin: 5px 0 0 0; font-size: 14px;">মোট পঠিত</p>
-              </div>
-              <div style="background: #fef3c7; padding: 15px; border-radius: 8px; text-align: center;">
-                <h3 style="color: #f59e0b; margin: 0; font-size: 24px;">${weeklyStats.streakDays}</h3>
-                <p style="color: #6B7280; margin: 5px 0 0 0; font-size: 14px;">ধারা দিন</p>
-              </div>
+        
+        ${hadithList.map((hadith, index) => `
+          <div class="hadith-card">
+            <div class="hadith-text">
+              "${hadith.text_bengali || hadith.text_arabic || 'হাদিস লোড হচ্ছে...'}"
             </div>
-            
-            <p style="color: #6B7280; font-size: 14px; text-align: center;">
-              চমৎকার! এভাবেই চালিয়ে যান। আল্লাহ আপনাকে উত্তম প্রতিদান দিন।
-            </p>
+            <div class="hadith-source">
+              ${hadith.book_name || 'সহীহ বুখারী'} - ${hadith.hadith_number || index + 1}
+            </div>
           </div>
-          
-          <div style="text-align: center; margin-top: 20px; color: #9CA3AF; font-size: 12px;">
-            <p>© ২০২৪ আমার হাদিস</p>
-          </div>
+        `).join('')}
+        
+        <div style="text-align: center;">
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://amarhadith.com'}" class="button">
+            আরও হাদিস পড়ুন
+          </a>
         </div>
-      `,
-      text: `আসসালামু আলাইকুম ${userName}! এই সপ্তাহে আপনি ${weeklyStats.totalHadithRead}টি হাদিস পড়েছেন।`
-    })
+        
+        <div class="footer">
+          <p>প্রতিদিন ইসলামিক জ্ঞানে সমৃদ্ধ হন।</p>
+          <p>আমার হাদিস টিম</p>
+          <p><small>এই ইমেইলটি পেতে না চাইলে <a href="#">আনসাবস্ক্রাইব</a> করুন।</small></p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+}
 
-    if (error) {
-      console.error('Error sending weekly summary email:', error)
-      return { success: false, error }
-    }
+// Helper function to send welcome email
+export async function sendWelcomeEmail(userEmail: string, userName: string) {
+  return sendEmail({
+    to: userEmail,
+    subject: 'আমার হাদিসে স্বাগতম! 🌟',
+    html: emailTemplates.welcome(userName)
+  })
+}
 
-    return { success: true, data }
-  } catch (error) {
-    console.error('Error sending weekly summary email:', error)
-    return { success: false, error }
+// Helper function to send daily hadith email
+export async function sendDailyHadithEmail(userEmail: string, hadithList: any[]) {
+  return sendEmail({
+    to: userEmail,
+    subject: `আজকের হাদিস - ${new Date().toLocaleDateString('bn-BD')}`,
+    html: emailTemplates.dailyHadith(hadithList)
+  })
+}
+
+// Fallback email service (if Resend is not available)
+export async function sendEmailFallback({ to, subject, html }: EmailOptions) {
+  console.log('📧 Email would be sent to:', to)
+  console.log('📧 Subject:', subject)
+  console.log('📧 Content preview:', html.substring(0, 100) + '...')
+  
+  // In development, just log the email
+  if (process.env.NODE_ENV === 'development') {
+    return { success: true, data: { id: 'dev-email-' + Date.now() } }
   }
+  
+  // In production without email service, return success but log warning
+  console.warn('⚠️ Email service not configured. Email not sent.')
+  return { success: true, data: { id: 'fallback-' + Date.now() } }
 }

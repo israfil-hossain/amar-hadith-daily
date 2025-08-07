@@ -31,9 +31,8 @@ export default function ContributePage() {
       author_bangla: 'ইমাম বুখারী',
       total_hadith: 7563,
       is_active: true,
-      display_order: 1,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+
+      created_at: new Date().toISOString()
     },
     {
       id: 'fallback-book-2',
@@ -42,9 +41,7 @@ export default function ContributePage() {
       author_bangla: 'ইমাম মুসলিম',
       total_hadith: 5362,
       is_active: true,
-      display_order: 2,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      created_at: new Date().toISOString()
     }
   ]
 
@@ -54,54 +51,48 @@ export default function ContributePage() {
       name_bangla: 'ইমান ও আকিদা',
       name_arabic: 'الإيمان والعقيدة',
       is_active: true,
-      display_order: 1,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      sort_order: 1,
+      created_at: new Date().toISOString()
     },
     {
       id: 'fallback-cat-2',
       name_bangla: 'নামাজ',
       name_arabic: 'الصلاة',
       is_active: true,
-      display_order: 2,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      sort_order: 2,
+      created_at: new Date().toISOString()
     },
     {
       id: 'fallback-cat-3',
       name_bangla: 'যাকাত',
       name_arabic: 'الزكاة',
       is_active: true,
-      display_order: 3,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      sort_order: 3,
+      created_at: new Date().toISOString()
     },
     {
       id: 'fallback-cat-4',
       name_bangla: 'রোজা',
       name_arabic: 'الصوم',
       is_active: true,
-      display_order: 4,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      sort_order: 4,
+      created_at: new Date().toISOString()
     },
     {
       id: 'fallback-cat-5',
       name_bangla: 'হজ্জ',
       name_arabic: 'الحج',
       is_active: true,
-      display_order: 5,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      sort_order: 5,
+      created_at: new Date().toISOString()
     },
     {
       id: 'fallback-cat-6',
       name_bangla: 'আখলাক ও আদব',
       name_arabic: 'الأخلاق والآداب',
       is_active: true,
-      display_order: 6,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      sort_order: 6,
+      created_at: new Date().toISOString()
     }
   ]
 

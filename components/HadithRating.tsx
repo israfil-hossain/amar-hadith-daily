@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -36,14 +36,9 @@ export function HadithRating({ hadithId, onRatingUpdate }: HadithRatingProps) {
   const [loading, setLoading] = useState(false)
   const [showRatingForm, setShowRatingForm] = useState(false)
 
-  useEffect(() => {
-    loadRatings()
-    if (user) {
-      loadUserRating()
-    }
-  }, [hadithId, user])
 
-  const loadRatings = async () => {
+
+  const loadRatings = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('hadith_ratings')
@@ -70,9 +65,9 @@ export function HadithRating({ hadithId, onRatingUpdate }: HadithRatingProps) {
     } catch (error) {
       console.error('Error loading ratings:', error)
     }
-  }
+  }, [hadithId])
 
-  const loadUserRating = async () => {
+  const loadUserRating = useCallback(async () => {
     if (!user) return
 
     try {
@@ -95,7 +90,14 @@ export function HadithRating({ hadithId, onRatingUpdate }: HadithRatingProps) {
     } catch (error) {
       // User hasn't rated yet, which is fine
     }
-  }
+  }, [hadithId, user])
+
+  useEffect(() => {
+    loadRatings()
+    if (user) {
+      loadUserRating()
+    }
+  }, [loadRatings, loadUserRating, user])
 
   const handleSubmitRating = async () => {
     if (!user) {
@@ -258,7 +260,7 @@ export function HadithRating({ hadithId, onRatingUpdate }: HadithRatingProps) {
                   )}
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium">সামগ্রিক:</span>
-                    {renderStars(userRating.overall_rating, undefined, true)}
+                    {renderStars(userRating.overall_rating || 0, undefined, true)}
                   </div>
                   {userRating.comment && (
                     <div className="mt-2">

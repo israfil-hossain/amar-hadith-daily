@@ -19,7 +19,7 @@ export default function CategoryPage() {
   const { user } = useAuth()
   const { toast } = useToast()
   
-  const categoryId = params.id as string
+  const categoryId = params?.id as string
   const [category, setCategory] = useState<HadithCategory | null>(null)
   const [hadithList, setHadithList] = useState<Hadith[]>([])
   const [hadithInteractions, setHadithInteractions] = useState<any[]>([])

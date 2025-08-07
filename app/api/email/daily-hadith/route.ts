@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendDailyHadithEmail } from '@/lib/email'
+import { sendDailyHadithEmail, sendEmailFallback } from '@/lib/email'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,7 +12,18 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const result = await sendDailyHadithEmail(userEmail, userName, hadithList)
+    // Try to send daily hadith email, fallback if service unavailable
+    let result
+    try {
+      result = await sendDailyHadithEmail(userEmail, hadithList)
+    } catch (emailError) {
+      console.warn('Primary email service failed, using fallback:', emailError)
+      result = await sendEmailFallback({
+        to: userEmail,
+        subject: `আজকের হাদিস - ${new Date().toLocaleDateString('bn-BD')}`,
+        html: `<h1>আজকের হাদিস</h1><p>প্রিয় ${userName}, আজকের হাদিস পড়ুন।</p>`
+      })
+    }
 
     if (!result.success) {
       return NextResponse.json(

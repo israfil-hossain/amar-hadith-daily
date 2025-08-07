@@ -86,6 +86,24 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
     }
   ]
 
+  const steps = [
+    {
+      step: "১",
+      title: "নিবন্ধন করুন",
+      description: "সহজ নিবন্ধন প্রক্রিয়ার মাধ্যমে যোগ দিন"
+    },
+    {
+      step: "২",
+      title: "দৈনিক হাদিস পান",
+      description: "প্রতিদিন ৩টি নির্বাচিত হাদিস পড়ুন"
+    },
+    {
+      step: "৩",
+      title: "পড়ুন ও শিখুন",
+      description: "হাদিস পড়ে চিহ্নিত করুন এবং জ্ঞান অর্জন করুন"
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-warm-cream to-sage-green/20">
       {/* Navigation Header */}

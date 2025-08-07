@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
-import { 
-  Share2, 
-  Facebook, 
-  Twitter, 
-  MessageCircle, 
+import {
+  Share2,
+  Facebook,
+  Twitter,
+  MessageCircle,
   Copy,
   Mail,
   Download
@@ -26,6 +26,14 @@ interface SocialShareProps {
 export const SocialShare = ({ hadith, compact = false }: SocialShareProps) => {
   const { toast } = useToast()
   const [sharing, setSharing] = useState(false)
+  const [shareUrl, setShareUrl] = useState('')
+
+  useEffect(() => {
+    // Only access window on client side
+    if (typeof window !== 'undefined') {
+      setShareUrl(`${window.location.origin}/hadith/${hadith.id}`)
+    }
+  }, [hadith.id])
 
   const shareText = `${hadith.text_bangla || hadith.bangla}
 
@@ -34,11 +42,10 @@ export const SocialShare = ({ hadith, compact = false }: SocialShareProps) => {
 
 #হাদিস #ইসলাম #আমারহাদিস`
 
-  const shareUrl = `${window.location.origin}/hadith/${hadith.id}`
-
   const copyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(`${shareText}\n\n${shareUrl}`)
+      const textToCopy = shareUrl ? `${shareText}\n\n${shareUrl}` : shareText
+      await navigator.clipboard.writeText(textToCopy)
       toast({
         title: 'কপি হয়েছে',
         description: 'হাদিসটি ক্লিপবোর্ডে কপি হয়েছে',
@@ -53,21 +60,25 @@ export const SocialShare = ({ hadith, compact = false }: SocialShareProps) => {
   }
 
   const shareOnFacebook = () => {
+    if (!shareUrl) return
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`
     window.open(url, '_blank', 'width=600,height=400')
   }
 
   const shareOnTwitter = () => {
+    if (!shareUrl) return
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`
     window.open(url, '_blank', 'width=600,height=400')
   }
 
   const shareOnWhatsApp = () => {
+    if (!shareUrl) return
     const url = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n\n${shareUrl}`)}`
     window.open(url, '_blank')
   }
 
   const shareViaEmail = () => {
+    if (!shareUrl) return
     const subject = `হাদিস শেয়ার - ${hadith.hadith_number || ''}`
     const body = `${shareText}\n\nআরও হাদিস পড়ুন: ${shareUrl}`
     const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`

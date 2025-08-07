@@ -38,9 +38,11 @@ export const HadithCard = ({
             </div>
             <div>
               <Badge variant="secondary" className="text-xs font-medium">
-                {hadith.book?.name_bangla || hadith.reference} • {hadith.hadith_number}
+                {hadith.book?.name_bangla || hadith.reference || 'অজানা'} • {hadith.hadith_number || ''}
               </Badge>
-              <p className="text-xs text-muted-foreground mt-1">{hadith.chapter_bangla}</p>
+              {hadith.chapter_bangla && (
+                <p className="text-xs text-muted-foreground mt-1">{hadith.chapter_bangla}</p>
+              )}
             </div>
           </div>
           
@@ -55,22 +57,26 @@ export const HadithCard = ({
 
       <CardContent className="space-y-6">
         {/* Arabic Text */}
-        <div className="text-center py-6 px-4 bg-warm-cream rounded-lg border border-border/20">
-          <p className="text-lg leading-relaxed font-arabic text-primary" style={{ fontFamily: 'serif', direction: 'rtl' }}>
-            {hadith.text_arabic}
-          </p>
-        </div>
+        {hadith.text_arabic && (
+          <div className="text-center py-6 px-4 bg-warm-cream rounded-lg border border-border/20">
+            <p className="text-lg leading-relaxed font-arabic text-primary" style={{ fontFamily: 'serif', direction: 'rtl' }}>
+              {hadith.text_arabic}
+            </p>
+          </div>
+        )}
 
         {/* Bengali Translation */}
-        <div className="bg-gradient-to-br from-background to-muted/30 p-6 rounded-lg border border-border/20">
-          <div className="flex items-center gap-2 mb-3">
-            <Calendar className="w-4 h-4 text-islamic-green" />
-            <span className="text-sm font-medium text-islamic-green">বাংলা অনুবাদ</span>
+        {hadith.text_bangla && (
+          <div className="bg-gradient-to-br from-background to-muted/30 p-6 rounded-lg border border-border/20">
+            <div className="flex items-center gap-2 mb-3">
+              <Calendar className="w-4 h-4 text-islamic-green" />
+              <span className="text-sm font-medium text-islamic-green">বাংলা অনুবাদ</span>
+            </div>
+            <p className="text-lg leading-relaxed text-foreground font-medium">
+              {hadith.text_bangla}
+            </p>
           </div>
-          <p className="text-lg leading-relaxed text-foreground font-medium">
-            {hadith.text_bangla}
-          </p>
-        </div>
+        )}
 
         {/* English Translation (if available) */}
         {hadith.text_english && (

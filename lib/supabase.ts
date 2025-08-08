@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createClient } from '@supabase/supabase-js'
 import { Database } from '@/types/database'
 
@@ -365,7 +366,7 @@ export const createSampleHadithData = async () => {
           }
         ])
 
-      console.log('✅ Sample hadith created:', hadithData?.length || 0)
+
 
       // Also create daily schedule for today
       const today = new Date().toISOString().split('T')[0]

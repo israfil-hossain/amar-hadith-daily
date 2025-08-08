@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Resend } from 'resend'
 
 // Initialize Resend with API key
@@ -125,7 +126,7 @@ export const emailTemplates = {
           
           <p>আজই শুরু করুন আপনার ইসলামিক জ্ঞান অর্জনের যাত্রা:</p>
           
-          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://amarhadith.com'}" class="button">
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://amarhadis.flowentech.com'}" class="button">
             আজকের হাদিস পড়ুন
           </a>
         </div>
